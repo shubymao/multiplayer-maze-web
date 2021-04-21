@@ -1,25 +1,24 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import GenerationDemo from './pages/GenerateDemo';
+import Maze from './pages/Maze';
+import MultiPlayerMaze from './pages/MultiplayerMaze';
 
-function App() {
+function App(): JSX.Element {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Switch>
+        <Route path="/generation-demo">
+          <GenerationDemo />
+        </Route>
+        <Route path="/online">
+          <MultiPlayerMaze />
+        </Route>
+        <Route path="/">
+          <Maze />
+        </Route>
+      </Switch>
+    </BrowserRouter>
   );
 }
 
