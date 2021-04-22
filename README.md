@@ -8,10 +8,11 @@ This project was original a school project where student are asked to apply the 
 
 This is a web project I started in the early 2017 and now ported over to this repo after the recent refactoring to my website. This project offer user a typescript library to generate a NxN seeded-random maze using the recursive back tracking algorithm. Here is what a generated result might looks like.
 
-![Generated Result](https://github.com/shubymao/multiplayer-maze-web/blob/main/public/GeneratedMaze.png?raw=true)
+<img src="https://github.com/shubymao/multiplayer-maze-web/blob/main/public/GeneratedMaze.png?raw=true" width="300" />
 
 The library also allows the user to visualize the generation process by indicating a delay during the generation process and the current location of the backtracking can be visualized. 
 
-![Generated Result](https://github.com/shubymao/multiplayer-maze-web/blob/main/public/GeneratingMaze.png?raw=true)
+<img src="https://github.com/shubymao/multiplayer-maze-web/blob/main/public/GeneratingMaze.png?raw=true" width="300" />
+
 
 The generation Demo can be found at the root url of the demo page.
