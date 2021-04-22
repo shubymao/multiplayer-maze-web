@@ -20,7 +20,6 @@ function GenerationDemo(): JSX.Element {
   const [canvasSize, setCanvasSize] = useState(bigScreen ? 500 : 250);
 
   useEffect(() => {
-    console.log('Changed size');
     setCanvasSize(bigScreen ? 500 : 200);
   }, [bigScreen]);
 

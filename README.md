@@ -1,46 +1,17 @@
-# Getting Started with Create React App
+# Multiplayer Maze Web
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Motivation
 
-## Available Scripts
+This project was original a school project where student are asked to apply the knowledge they learn in designing a application that uses complex algorithm and data structure. Original variant only have the maze generation aspect with no multiplayer aspect. However, after I first finished the project, I was asked by a friend to investigated into how to integrate this application into a multiplayer game and converted it into a multiplayer game using the Firebase real time database system, FireStore.
 
-In the project directory, you can run:
+## Technical Details
 
-### `npm start`
+This is a web project I started in the early 2017 and now ported over to this repo after the recent refactoring to my website. This project offer user a typescript library to generate a NxN seeded-random maze using the recursive back tracking algorithm. Here is what a generated result might looks like.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+![Generated Result](https://github.com/shubymao/multiplayer-maze-web/blob/main/public/GeneratedMaze.png?raw=true)
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+The library also allows the user to visualize the generation process by indicating a delay during the generation process and the current location of the backtracking can be visualized. 
 
-### `npm test`
+![Generated Result](https://github.com/shubymao/multiplayer-maze-web/blob/main/public/GeneratingMaze.png?raw=true)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+The generation Demo can be found at the root url of the demo page.
