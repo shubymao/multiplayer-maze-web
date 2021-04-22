@@ -8,14 +8,11 @@ function App(): JSX.Element {
   return (
     <BrowserRouter>
       <Switch>
-        <Route path="/generation-demo">
-          <GenerationDemo />
-        </Route>
         <Route path="/online">
           <MultiPlayerMaze />
         </Route>
         <Route path="/">
-          <Maze />
+          <GenerationDemo />
         </Route>
       </Switch>
     </BrowserRouter>

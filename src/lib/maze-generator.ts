@@ -1,12 +1,31 @@
-export type Cell = number;
-type Cord = { r: number; c: number };
-
 // eslint-disable-next-line no-shadow
 export enum Direction {
   TOP = 1, // 0001
   RIGHT = 2, // 0010
   DOWN = 4, // 0100
   LEFT = 8 // 1000
+}
+export type Cell = number;
+export type Cord = { r: number; c: number };
+export type OnUpdate = (grid: Cell[][], cord: Cord) => Promise<void>;
+export type Config = { userSeed?: number; onUpdate?: OnUpdate };
+export const START_CORD = { r: 0, c: 0 };
+export const ALL_DIRS = [Direction.TOP, Direction.RIGHT, Direction.DOWN, Direction.LEFT];
+const ALL_WALL = 15; // 1111
+let globalSeed: number = Math.random() * 1e9;
+let maze: Cell[][];
+let seen: boolean[][];
+
+export function isValidGrid(grid?: Cell[][]): boolean {
+  if (!grid) return false;
+  if (grid.length === 0) return false;
+  const size = grid.length;
+  const col = grid.reduce((prev, row) => {
+    if (!row || row.length !== prev) return -1;
+    return prev;
+  }, size);
+  if (col === -1) return false;
+  return true;
 }
 
 export function getOPDir(dir: Direction): Direction {
@@ -23,11 +42,6 @@ export function getDirCordOffset(dir: Direction): number[] {
   return [0, -1];
 }
 
-export const START_CORD = { r: 0, c: 0 };
-const ALL_WALL = 15; // 1111
-
-let globalSeed: number | undefined = Math.random() * 1e9;
-
 export function hasWall(cell: Cell, dir: Direction): boolean {
   return (cell & dir) !== 0;
 }
@@ -42,8 +56,13 @@ export function create2DArray<T>(size: number, val: T): T[][] {
   return arr.fill([]).map(() => new Array<T>(size).fill(val));
 }
 
+export function getRandomSeed(): number {
+  return Math.floor(Math.random() * 1e9);
+}
+
 function setSeed(inputSeed?: number) {
-  globalSeed = inputSeed;
+  if (inputSeed) globalSeed = inputSeed;
+  else globalSeed = Math.random() * 1e9;
 }
 
 export function rand(): number {
@@ -80,33 +99,35 @@ export function isOutOfBound(grid: Cell[][], cord: Cord): boolean {
   return false;
 }
 
-export function isVisited(seen: boolean[][], cord: Cord): boolean {
+export function isVisited(cord: Cord): boolean {
   const { r, c } = cord;
   return seen[r][c];
 }
 
-export function visit(seen: boolean[][], cord: Cord): void {
+export function visit(cord: Cord): void {
   const { r, c } = cord;
   seen[r][c] = true;
 }
 
-function depthFirstSearch(grid: Cell[][], seen: boolean[][], cord: Cord): void {
+async function depthFirstSearch(cord: Cord, update?: OnUpdate): Promise<void> {
   const dirs = getDirs();
+  visit(cord);
+  if (update) await update(maze, cord);
   for (const dir of dirs) {
     const nextCord = getNextCord(cord, dir);
-    if (!isOutOfBound(grid, nextCord) && !isVisited(seen, nextCord)) {
-      visit(seen, nextCord);
-      breakWall(grid, cord, dir);
-      breakWall(grid, nextCord, getOPDir(dir));
-      depthFirstSearch(grid, seen, nextCord);
+    if (!isOutOfBound(maze, nextCord) && !isVisited(nextCord)) {
+      breakWall(maze, cord, dir);
+      breakWall(maze, nextCord, getOPDir(dir));
+      await depthFirstSearch(nextCord, update);
     }
   }
 }
 
-export function generateMaze(size: number, userSeed?: number): Cell[][] {
-  const maze = create2DArray<Cell>(size, ALL_WALL);
-  const seen = create2DArray<boolean>(size, false);
+export async function generateMaze(size: number, params: Config = {}): Promise<Cell[][]> {
+  const { userSeed, onUpdate } = params;
+  maze = create2DArray<Cell>(size, ALL_WALL);
+  seen = create2DArray<boolean>(size, false);
   setSeed(userSeed);
-  depthFirstSearch(maze, seen, START_CORD);
+  await depthFirstSearch(START_CORD, onUpdate);
   return maze;
 }

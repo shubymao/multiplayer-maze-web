@@ -38,7 +38,8 @@
     "no-plusplus": "off",
     "no-param-reassign": "off",
     "no-restricted-syntax": "off",
-    "no-continue": "off"
+    "no-continue": "off",
+    "no-await-in-loop": "off"
   },
   "ignorePatterns": [".eslintrc.js", "*.config.js"]
 }
