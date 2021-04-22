@@ -1,5 +1,6 @@
 {
   "name": "multiplayer-maze-web",
+  "homepage": "https://shubymao.github.io/multiplayer-maze-web/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
