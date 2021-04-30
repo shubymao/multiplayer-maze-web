@@ -1,17 +1,8 @@
-// eslint-disable-next-line no-shadow
-export enum Direction {
-  TOP = 1, // 0001
-  RIGHT = 2, // 0010
-  DOWN = 4, // 0100
-  LEFT = 8 // 1000
-}
-export type Cell = number;
-export type Cord = { r: number; c: number };
-export type OnUpdate = (grid: Cell[][], cord: Cord) => Promise<void>;
-export type Config = { userSeed?: number; onUpdate?: OnUpdate };
+import { Cell, Cord, OnUpdate, Config, Direction } from '../type';
+
 export const START_CORD = { r: 0, c: 0 };
-export const ALL_DIRS = [Direction.TOP, Direction.RIGHT, Direction.DOWN, Direction.LEFT];
-const ALL_WALL = 15; // 1111
+export const ALL_DIRS_ARR = [Direction.TOP, Direction.RIGHT, Direction.DOWN, Direction.LEFT];
+const ALL_DIRS = 15; // 1111
 let globalSeed: number = Math.random() * 1e9;
 let maze: Cell[][];
 let seen: boolean[][];
@@ -42,13 +33,23 @@ export function getDirCordOffset(dir: Direction): number[] {
   return [0, -1];
 }
 
-export function hasWall(cell: Cell, dir: Direction): boolean {
-  return (cell & dir) !== 0;
+export function hasDirection(cell: Cell, dir: Direction): boolean {
+  const hasDir = (cell & dir) !== 0;
+  return hasDir;
+}
+
+export function removeDir(dirCombo: number, dir: Direction): number {
+  if (hasDirection(dirCombo, dir)) return dirCombo ^ dir;
+  return dirCombo;
+}
+
+export function addDir(dirCombo: number, dir: Direction): number {
+  return dirCombo | dir;
 }
 
 export function breakWall(grid: Cell[][], cord: Cord, dir: Direction): void {
   const { r, c } = cord;
-  if (hasWall(grid[r][c], dir)) grid[r][c] ^= dir;
+  grid[r][c] = removeDir(grid[r][c], dir);
 }
 
 export function create2DArray<T>(size: number, val: T): T[][] {
@@ -57,7 +58,7 @@ export function create2DArray<T>(size: number, val: T): T[][] {
 }
 
 export function getRandomSeed(): number {
-  return Math.floor(Math.random() * 1e9);
+  return Math.floor(Math.random() * 100000);
 }
 
 function setSeed(inputSeed?: number) {
@@ -123,11 +124,32 @@ async function depthFirstSearch(cord: Cord, update?: OnUpdate): Promise<void> {
   }
 }
 
+function depthFirstSearchSync(cord: Cord): void {
+  const dirs = getDirs();
+  visit(cord);
+  for (const dir of dirs) {
+    const nextCord = getNextCord(cord, dir);
+    if (!isOutOfBound(maze, nextCord) && !isVisited(nextCord)) {
+      breakWall(maze, cord, dir);
+      breakWall(maze, nextCord, getOPDir(dir));
+      depthFirstSearchSync(nextCord);
+    }
+  }
+}
+
 export async function generateMaze(size: number, params: Config = {}): Promise<Cell[][]> {
   const { userSeed, onUpdate } = params;
-  maze = create2DArray<Cell>(size, ALL_WALL);
+  maze = create2DArray<Cell>(size, ALL_DIRS);
   seen = create2DArray<boolean>(size, false);
   setSeed(userSeed);
   await depthFirstSearch(START_CORD, onUpdate);
+  return maze;
+}
+
+export function generateMazeSync(size: number, userSeed?: number): Cell[][] {
+  maze = create2DArray<Cell>(size, ALL_DIRS);
+  seen = create2DArray<boolean>(size, false);
+  setSeed(userSeed);
+  depthFirstSearchSync(START_CORD);
   return maze;
 }

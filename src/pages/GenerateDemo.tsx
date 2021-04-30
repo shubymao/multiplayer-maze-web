@@ -1,6 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { createRef, useEffect, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
-import drawGrid, { getOnUpdate } from '../lib/canvas';
+import Button from '../components/button';
+import Canvas from '../components/canvas';
+import LabelInput from '../components/label-input';
+import Nav from '../components/nav';
+import CanvasManager, { getOnUpdate } from '../lib/canvas-manager';
 import { generateMaze, getRandomSeed } from '../lib/maze-generator';
 
 function handleChange(callBack: React.Dispatch<string>, check: (nVal: number) => boolean) {
@@ -11,7 +15,8 @@ function handleChange(callBack: React.Dispatch<string>, check: (nVal: number) =>
 }
 
 function GenerationDemo(): JSX.Element {
-  const canvasRef: React.LegacyRef<HTMLCanvasElement> = useRef(null);
+  const canvasRef: React.LegacyRef<HTMLCanvasElement> = createRef();
+
   const [size, setSize] = useState('10');
   const [delay, setDelay] = useState('10');
   const [seed, setSeed] = useState(getRandomSeed().toString());
@@ -27,10 +32,11 @@ function GenerationDemo(): JSX.Element {
     if (busy) return;
     setIsBusy(true);
     const canvas = canvasRef.current;
-    const onUpdate = getOnUpdate(canvas, parseInt(delay, 10));
+    const canvasManager = new CanvasManager(canvas);
+    const onUpdate = getOnUpdate(canvasManager, parseInt(delay, 10));
     const userSeed = parseInt(seed, 10);
     const maze = await generateMaze(parseInt(size, 10), { onUpdate, userSeed });
-    if (canvas) drawGrid(canvas, maze);
+    canvasManager.drawGrid(maze);
     setIsBusy(false);
   };
 
@@ -42,29 +48,13 @@ function GenerationDemo(): JSX.Element {
     <div className="w-full min-h-screen bg-gray-700">
       <div className="space-y-3 flex flex-col items-center p-4 text-white">
         <h1 className="text-4xl my-4">Generation Demo</h1>
-        <canvas ref={canvasRef} width={canvasSize} height={canvasSize} className="bg-white" />
-        <div className="flex flex-wrap w-full gap-3 items-center place-content-center text-center text-black">
-          <div className="flex flex-col items-center">
-            <p className="inline-block text-white text-lg">Size</p>
-            <input className="w-16" value={size} onChange={updateSize} />
-          </div>
-          <div className="flex flex-col items-center">
-            <p className="inline-block text-white text-lg">Delay(ms)</p>
-            <input className="w-16" value={delay} onChange={updateDelay} />
-          </div>
-          <div className="flex flex-col items-center">
-            <p className="inline-block text-white text-lg">Seed</p>
-            <input className="w-20" value={seed} onChange={updateSeed} />
-          </div>
-          <div className="flex flex-col items-center">
-            <button
-              className="p-3 rounded-lg bg-green-500 hover:bg-green-300"
-              onClick={onClick}
-              type="submit"
-            >
-              Generate Maze
-            </button>
-          </div>
+        <Nav />
+        <Canvas ref={canvasRef} size={canvasSize} />
+        <div className="flex flex-wrap gap-3 items-center place-content-center">
+          <LabelInput label="Size" value={size} onChange={updateSize} />
+          <LabelInput label="Delay" value={delay} onChange={updateDelay} />
+          <LabelInput label="Seed" value={seed} onChange={updateSeed} />
+          <Button color="bg-green-500" onClick={onClick} label="Generate" />
         </div>
       </div>
     </div>

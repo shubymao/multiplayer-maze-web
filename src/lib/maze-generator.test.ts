@@ -1,12 +1,11 @@
+import { Direction } from '../type';
 import {
   create2DArray,
   generateMaze,
-  hasWall,
+  hasDirection,
   START_CORD,
-  Direction,
   getNextCord,
-  isOutOfBound,
-  isVisited
+  isOutOfBound
 } from './maze-generator';
 
 test('Generator creates a grid row of indicated size.', async () => {
@@ -51,10 +50,10 @@ test('Check maze created is solvable', async () => {
       if (seen[r][c]) continue;
       seen[r][c] = true;
       visitCount++;
-      if (!hasWall(maze[r][c], Direction.TOP)) stk.push(getNextCord(cord, Direction.TOP));
-      if (!hasWall(maze[r][c], Direction.DOWN)) stk.push(getNextCord(cord, Direction.DOWN));
-      if (!hasWall(maze[r][c], Direction.LEFT)) stk.push(getNextCord(cord, Direction.LEFT));
-      if (!hasWall(maze[r][c], Direction.RIGHT)) stk.push(getNextCord(cord, Direction.RIGHT));
+      if (!hasDirection(maze[r][c], Direction.TOP)) stk.push(getNextCord(cord, Direction.TOP));
+      if (!hasDirection(maze[r][c], Direction.DOWN)) stk.push(getNextCord(cord, Direction.DOWN));
+      if (!hasDirection(maze[r][c], Direction.LEFT)) stk.push(getNextCord(cord, Direction.LEFT));
+      if (!hasDirection(maze[r][c], Direction.RIGHT)) stk.push(getNextCord(cord, Direction.RIGHT));
     }
   }
   expect(visitCount).toEqual(100);
