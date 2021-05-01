@@ -7,7 +7,7 @@ const Nav: FC = () => {
   return (
     <div className="flex justify-center flex-wrap gap-4 text-white">
       {items.map((item) => {
-        return item.name.charAt(0) === '/' ? (
+        return item.url.charAt(0) === '/' ? (
           <Link
             className="hover:text-green-500"
             key={item.name}
