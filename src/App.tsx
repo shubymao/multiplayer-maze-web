@@ -6,7 +6,7 @@ import MultiPlayerMaze from './pages/MultiplayerMaze';
 
 function App(): JSX.Element {
   return (
-    <HashRouter basename={process.env.PUBLIC_URL}>
+    <HashRouter basename="/">
       <Switch>
         <Route path="/online">
           <MultiPlayerMaze />

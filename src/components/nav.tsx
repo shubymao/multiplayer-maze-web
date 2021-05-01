@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import { Link } from 'react-router-dom';
 import LINKS from '../constants';
 
 const Nav: FC = () => {
@@ -6,7 +7,11 @@ const Nav: FC = () => {
   return (
     <div className="flex justify-center flex-wrap gap-4 text-white">
       {items.map((item) => {
-        return (
+        return item.name.charAt(0) === '/' ? (
+          <Link key={item.name} to={item.url}>
+            {item.name}
+          </Link>
+        ) : (
           <a href={item.url} key={item.name} className="hover:text-green-500">
             {item.name}
           </a>
