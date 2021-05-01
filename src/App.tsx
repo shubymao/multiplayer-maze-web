@@ -7,13 +7,13 @@ import MultiPlayerMaze from './pages/MultiplayerMaze';
 function App(): JSX.Element {
   return (
     <Switch>
-      <Route path="/online">
+      <Route exact path="/online">
         <MultiPlayerMaze />
       </Route>
-      <Route path="/generator">
+      <Route exact path="/generator">
         <GenerationDemo />
       </Route>
-      <Route path="/">
+      <Route>
         <Maze />
       </Route>
     </Switch>
