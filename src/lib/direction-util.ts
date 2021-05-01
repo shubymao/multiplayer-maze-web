@@ -1,6 +1,9 @@
 import { IDLE_CONTROL } from '../constants';
 import { Cell, Control, Direction } from '../type';
 
+export const ALL_DIRS_ARR = [Direction.TOP, Direction.RIGHT, Direction.DOWN, Direction.LEFT];
+export const ALL_DIRS_CELL = 15; // 1111
+
 export function getOPDir(dir: Direction): Direction {
   if (dir === Direction.TOP) return Direction.DOWN;
   if (dir === Direction.RIGHT) return Direction.LEFT;

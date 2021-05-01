@@ -1,9 +1,8 @@
 import { Cell, Cord, OnUpdate, Config, Direction } from '../type';
-import { getDirCordOffset, getOPDir, removeDir } from './direction-util';
+import { ALL_DIRS_CELL, getDirCordOffset, getOPDir, removeDir } from './direction-util';
 
 export const START_CORD = { r: 0, c: 0 };
-export const ALL_DIRS_ARR = [Direction.TOP, Direction.RIGHT, Direction.DOWN, Direction.LEFT];
-const ALL_DIRS = 15; // 1111
+
 let globalSeed: number = Math.random() * 1e9;
 let maze: Cell[][];
 let seen: boolean[][];
@@ -112,7 +111,7 @@ function depthFirstSearchSync(cord: Cord): void {
 
 export async function generateMaze(size: number, params: Config = {}): Promise<Cell[][]> {
   const { userSeed, onUpdate } = params;
-  maze = create2DArray<Cell>(size, ALL_DIRS);
+  maze = create2DArray<Cell>(size, ALL_DIRS_CELL);
   seen = create2DArray<boolean>(size, false);
   setSeed(userSeed);
   await depthFirstSearch(START_CORD, onUpdate);
@@ -120,7 +119,7 @@ export async function generateMaze(size: number, params: Config = {}): Promise<C
 }
 
 export function generateMazeSync(size: number, userSeed?: number): Cell[][] {
-  maze = create2DArray<Cell>(size, ALL_DIRS);
+  maze = create2DArray<Cell>(size, ALL_DIRS_CELL);
   seen = create2DArray<boolean>(size, false);
   setSeed(userSeed);
   depthFirstSearchSync(START_CORD);

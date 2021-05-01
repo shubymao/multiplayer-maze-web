@@ -1,12 +1,12 @@
 import React from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { HashRouter, Route, Switch } from 'react-router-dom';
 import GenerationDemo from './pages/GenerateDemo';
 import Maze from './pages/Maze';
 import MultiPlayerMaze from './pages/MultiplayerMaze';
 
 function App(): JSX.Element {
   return (
-    <BrowserRouter>
+    <HashRouter basename={process.env.PUBLIC_URL}>
       <Switch>
         <Route path="/online">
           <MultiPlayerMaze />
@@ -18,7 +18,7 @@ function App(): JSX.Element {
           <Maze />
         </Route>
       </Switch>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
