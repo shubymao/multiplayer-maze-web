@@ -1,8 +1,8 @@
 import { Direction } from '../type';
+import { hasDirection } from './direction-util';
 import {
   create2DArray,
   generateMaze,
-  hasDirection,
   START_CORD,
   getNextCord,
   isOutOfBound
