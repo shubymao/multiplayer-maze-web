@@ -1,13 +1,29 @@
-import React, { KeyboardEventHandler, useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  KeyboardEventHandler,
+  LegacyRef,
+  useCallback,
+  useEffect,
+  useRef,
+  useState
+} from 'react';
 import { useMediaQuery } from 'react-responsive';
 import Canvas from '../components/canvas';
+import Container from '../components/container';
+import JoyStick from '../components/joy-stick';
 import Nav from '../components/nav';
+import { IDLE_CONTROL } from '../constants';
+import getControlFromDir, { addDir, removeDir } from '../lib/direction-util';
 import Game from '../lib/game';
-import { addDir, removeDir } from '../lib/maze-generator';
-import { Direction } from '../type';
+import { Control, Direction } from '../type';
 
 interface StringMap {
   [key: string]: number;
+}
+
+function getCanvasSize(bigScreen: boolean, midScreen: boolean): number {
+  if (bigScreen) return 500;
+  if (midScreen) return 350;
+  return 250;
 }
 
 const KEY_MAP: StringMap = {
@@ -19,52 +35,63 @@ const KEY_MAP: StringMap = {
 
 function Maze(): JSX.Element {
   const [level, setLevel] = useState(1);
-  const canvasRef: React.LegacyRef<HTMLCanvasElement> = useRef(null);
-  const bigScreen = useMediaQuery({ query: '(min-width: 550px)' });
-  const [canvasSize, setCanvasSize] = useState(bigScreen ? 500 : 250);
+  const canvasRef: LegacyRef<HTMLCanvasElement> = useRef(null);
+  const bigScreen = useMediaQuery({ query: '(min-width: 600px)' });
+  const midScreen = useMediaQuery({ query: '(min-width: 400px)' });
+  const [canvasSize, setCanvasSize] = useState(getCanvasSize(bigScreen, midScreen));
   const game = useRef<Game>();
-  const requestRef = React.useRef(0);
-  let dirCombo = 0;
-
-  useEffect(() => {
-    setCanvasSize(bigScreen ? 500 : 200);
-    game.current = new Game(canvasRef.current, level);
-  }, [bigScreen, level]);
+  const animationRef = useRef(0);
+  const control = useRef<Control>(IDLE_CONTROL);
+  const keyDirs = useRef(0);
 
   const animate: FrameRequestCallback = useCallback(() => {
-    game.current?.performMove(dirCombo);
+    game.current?.performMove(control.current);
     game.current?.renderGame();
     if (game.current?.checkWin()) {
       setLevel(level + 1);
     }
-    requestRef.current = requestAnimationFrame(animate);
-  }, [dirCombo, game, level]);
+    animationRef.current = requestAnimationFrame(animate);
+  }, [control, game, level]);
 
-  React.useEffect(() => {
-    requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(requestRef.current);
-  }, [animate]);
+  useEffect(() => {
+    setCanvasSize(getCanvasSize(bigScreen, midScreen));
+  }, [bigScreen, midScreen]);
 
-  const onKeyDown: KeyboardEventHandler<HTMLCanvasElement> = (event) => {
-    event.preventDefault();
+  useEffect(() => {
+    game.current = new Game(canvasRef.current, level);
+    animationRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationRef.current);
+  }, [level, animate]);
+
+  const onKeyDown: KeyboardEventHandler<HTMLDivElement> = (event) => {
     const dir = KEY_MAP[event.key] || 0;
-    dirCombo = addDir(dirCombo, dir);
+    if (dir !== 0) event.preventDefault();
+    keyDirs.current = addDir(keyDirs.current, dir);
+    control.current = getControlFromDir(keyDirs.current);
   };
 
-  const onKeyUp: KeyboardEventHandler<HTMLCanvasElement> = (event) => {
+  const onKeyUp: KeyboardEventHandler<HTMLDivElement> = (event) => {
     const dir = KEY_MAP[event.key] || 0;
-    event.preventDefault();
-    dirCombo = removeDir(dirCombo, dir);
+    if (dir !== 0) event.preventDefault();
+    keyDirs.current = removeDir(keyDirs.current, dir);
+    control.current = getControlFromDir(keyDirs.current);
   };
+
+  const onEventHandler = useCallback((ctrl: Control): void => {
+    control.current = ctrl;
+  }, []);
+
+  const offEventHandler = useCallback((): void => {
+    control.current = IDLE_CONTROL;
+  }, []);
 
   return (
-    <div className="w-full min-h-screen bg-gray-700">
-      <div className="space-y-3 flex flex-col items-center p-4 text-white">
-        <h1 className="text-4xl my-4">Offline Maze Level {level}</h1>
-        <Nav />
-        <Canvas onKeyDown={onKeyDown} onKeyUp={onKeyUp} ref={canvasRef} size={canvasSize} />
-      </div>
-    </div>
+    <Container onKeyDown={onKeyDown} onKeyUp={onKeyUp}>
+      <h1 className="text-4xl my-4 text-center">Offline Maze Level {level}</h1>
+      <Nav />
+      <Canvas ref={canvasRef} size={canvasSize} />
+      <JoyStick size={120} offEventHandler={offEventHandler} onEventHandler={onEventHandler} />
+    </Container>
   );
 }
 

@@ -12,3 +12,4 @@ export type OnUpdate = (grid: Cell[][], cord: Cord) => Promise<void>;
 export type Config = { userSeed?: number; onUpdate?: OnUpdate };
 export type CanvasOrNull = HTMLCanvasElement | null;
 export type Context = CanvasRenderingContext2D;
+export type Control = { magnitude: number; angle: number };

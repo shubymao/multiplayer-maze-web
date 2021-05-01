@@ -1,10 +1,11 @@
 import CanvasManager from './canvas-manager';
-import { generateMazeSync, hasDirection } from './maze-generator';
-import { Cell, Cord, Direction, CanvasOrNull } from '../type';
+import { generateMazeSync } from './maze-generator';
+import { Cell, Cord, Direction, CanvasOrNull, Control } from '../type';
+import { hasDirection } from './direction-util';
 
 const START_POS: Cord = { r: 0.5, c: 0.5 };
 const MARGIN = 0.1;
-const SPEED = 0.04;
+const MAX_SPEED = 0.05;
 
 export default class Game {
   private canvasManager: CanvasManager;
@@ -44,13 +45,12 @@ export default class Game {
     return this.position;
   };
 
-  public performMove = (dir: number): void => {
+  public performMove = (control: Control): void => {
+    const { magnitude, angle } = control;
     let nr = this.position.r;
     let nc = this.position.c;
-    if (hasDirection(dir, Direction.TOP)) nr -= SPEED;
-    if (hasDirection(dir, Direction.DOWN)) nr += SPEED;
-    if (hasDirection(dir, Direction.LEFT)) nc -= SPEED;
-    if (hasDirection(dir, Direction.RIGHT)) nc += SPEED;
+    nr += -MAX_SPEED * magnitude * Math.sin(angle);
+    nc += MAX_SPEED * magnitude * Math.cos(angle);
     this.position = this.getBoundedCord(nr, nc);
   };
 
@@ -72,7 +72,9 @@ export default class Game {
   };
 
   public renderGame = (): void => {
+    this.canvasManager.refreshContext();
     this.canvasManager.drawGrid(this.maze);
+    this.canvasManager.drawStartFinish(this.maze);
     this.canvasManager.drawPlayer(this.position);
   };
 }

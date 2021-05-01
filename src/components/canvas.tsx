@@ -11,7 +11,6 @@ const Canvas = React.forwardRef(
     const { size, onKeyUp, onKeyDown } = props;
     return (
       <canvas
-        tabIndex={0}
         onKeyDown={onKeyDown}
         onKeyUp={onKeyUp}
         ref={ref}

@@ -1,4 +1,5 @@
 import { Cell, Cord, OnUpdate, Config, Direction } from '../type';
+import { getDirCordOffset, getOPDir, removeDir } from './direction-util';
 
 export const START_CORD = { r: 0, c: 0 };
 export const ALL_DIRS_ARR = [Direction.TOP, Direction.RIGHT, Direction.DOWN, Direction.LEFT];
@@ -17,34 +18,6 @@ export function isValidGrid(grid?: Cell[][]): boolean {
   }, size);
   if (col === -1) return false;
   return true;
-}
-
-export function getOPDir(dir: Direction): Direction {
-  if (dir === Direction.TOP) return Direction.DOWN;
-  if (dir === Direction.RIGHT) return Direction.LEFT;
-  if (dir === Direction.DOWN) return Direction.TOP;
-  return Direction.RIGHT;
-}
-
-export function getDirCordOffset(dir: Direction): number[] {
-  if (dir === Direction.TOP) return [-1, 0];
-  if (dir === Direction.RIGHT) return [0, 1];
-  if (dir === Direction.DOWN) return [1, 0];
-  return [0, -1];
-}
-
-export function hasDirection(cell: Cell, dir: Direction): boolean {
-  const hasDir = (cell & dir) !== 0;
-  return hasDir;
-}
-
-export function removeDir(dirCombo: number, dir: Direction): number {
-  if (hasDirection(dirCombo, dir)) return dirCombo ^ dir;
-  return dirCombo;
-}
-
-export function addDir(dirCombo: number, dir: Direction): number {
-  return dirCombo | dir;
 }
 
 export function breakWall(grid: Cell[][], cord: Cord, dir: Direction): void {

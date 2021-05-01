@@ -1,10 +1,13 @@
-import { hasDirection, isValidGrid, ALL_DIRS_ARR } from './maze-generator';
+import { isValidGrid, ALL_DIRS_ARR } from './maze-generator';
 import { Direction, Cell, Cord, OnUpdate, CanvasOrNull, Context } from '../type';
+import { hasDirection } from './direction-util';
 
 const PADDING = 10;
+const START_COLOR = '#DC2626';
+const END_COLOR = '#10B981';
 const BORDER_COLOR = '#000000';
 const INDICATOR_COLOR = '#FF0000';
-const DEFAULT_PLAYER_COLOR = '#';
+const DEFAULT_PLAYER_COLOR = '#FBBF24';
 const TWO_PI = 2 * Math.PI;
 const DEFAULT_STOKE_WIDTH = 1;
 const PLAYER_STOKE_WIDTH = 2;
@@ -31,6 +34,8 @@ export function getOnUpdate(canvasManager: CanvasManager, delay = 50): OnUpdate 
 }
 
 export default class CanvasManager {
+  private canvas: CanvasOrNull;
+
   private ctx: Context;
 
   private width: number;
@@ -48,7 +53,15 @@ export default class CanvasManager {
   private playerRadius = -1;
 
   constructor(canvas: CanvasOrNull) {
-    const { context, height, width } = getContext(canvas);
+    this.canvas = canvas;
+    const { context, height, width } = getContext(this.canvas);
+    this.ctx = context;
+    this.width = width;
+    this.height = height;
+  }
+
+  public refreshContext(): void {
+    const { context, height, width } = getContext(this.canvas);
     this.ctx = context;
     this.width = width;
     this.height = height;
@@ -71,14 +84,17 @@ export default class CanvasManager {
   };
 
   public drawIndicatorSquare = (cord: Cord): void => {
-    this.ctx.beginPath();
     this.ctx.fillStyle = INDICATOR_COLOR;
-    const { r, c } = cord;
-    this.ctx.moveTo(this.cCord(c) + 1, this.rCord(r) + 1);
-    this.ctx.lineTo(this.cCord(c + 1) - 1, this.rCord(r) + 1);
-    this.ctx.lineTo(this.cCord(c + 1) - 1, this.rCord(r + 1) - 1);
-    this.ctx.lineTo(this.cCord(c) + 1, this.rCord(r + 1) - 1);
-    this.ctx.closePath();
+    this.drawSquare(cord);
+    this.ctx.fill();
+  };
+
+  public drawStartFinish = (maze: number[][]): void => {
+    this.ctx.fillStyle = START_COLOR;
+    this.drawSquare({ r: 0, c: 0 });
+    this.ctx.fill();
+    this.ctx.fillStyle = END_COLOR;
+    this.drawSquare({ r: maze.length - 1, c: maze.length - 1 });
     this.ctx.fill();
   };
 
@@ -86,6 +102,8 @@ export default class CanvasManager {
     this.ctx.fillStyle = color;
     this.ctx.lineWidth = PLAYER_STOKE_WIDTH;
     this.drawCircle(cord, this.playerRadius);
+    this.ctx.fill();
+    this.ctx.stroke();
   };
 
   private initDimension = (width: number, height: number, grid: Cell[][]): void => {
@@ -101,8 +119,17 @@ export default class CanvasManager {
     const x = this.cCord(cord.c);
     const y = this.rCord(cord.r);
     this.ctx.arc(x, y, radius, 0, TWO_PI);
-    this.ctx.fill();
-    this.ctx.stroke();
+    this.ctx.closePath();
+  };
+
+  private drawSquare = (cord: Cord): void => {
+    const { r, c } = cord;
+    this.ctx.beginPath();
+    this.ctx.moveTo(this.cCord(c) + 1, this.rCord(r) + 1);
+    this.ctx.lineTo(this.cCord(c + 1) - 1, this.rCord(r) + 1);
+    this.ctx.lineTo(this.cCord(c + 1) - 1, this.rCord(r + 1) - 1);
+    this.ctx.lineTo(this.cCord(c) + 1, this.rCord(r + 1) - 1);
+    this.ctx.closePath();
   };
 
   private rCord = (r: number) => {

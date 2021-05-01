@@ -1,12 +1,13 @@
 import React from 'react';
+import Container from '../components/container';
 import Nav from '../components/nav';
 
 function MultiPlayerMaze(): JSX.Element {
   return (
-    <div className="w-full h-screen flex flex-col space-y-3 text-center items-center">
-      <h1>Maze Multiplayer</h1>
+    <Container>
+      <h1 className="text-4xl my-4">Maze Multiplayer</h1>
       <Nav />
-    </div>
+    </Container>
   );
 }
 
