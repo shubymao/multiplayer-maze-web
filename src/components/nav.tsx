@@ -9,7 +9,7 @@ const Nav: FC = () => {
       {items.map((item) => {
         return item.url.charAt(0) === '/' ? (
           <Link className="hover:text-green-500" key={item.name} to={item.url}>
-            {item.name}
+            {`Link: ${item.name}`}
           </Link>
         ) : (
           <a href={item.url} key={item.name} className="hover:text-green-500">
