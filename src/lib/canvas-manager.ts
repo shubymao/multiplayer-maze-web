@@ -1,6 +1,6 @@
-import { isValidGrid, ALL_DIRS_ARR } from './maze-generator';
+import { isValidGrid } from './maze-generator';
 import { Direction, Cell, Cord, OnUpdate, CanvasOrNull, Context } from '../type';
-import { hasDirection } from './direction-util';
+import { hasDirection, ALL_DIRS_ARR } from './direction-util';
 
 const PADDING = 10;
 const START_COLOR = '#DC2626';
