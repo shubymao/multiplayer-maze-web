@@ -8,11 +8,7 @@ const Nav: FC = () => {
     <div className="flex justify-center flex-wrap gap-4 text-white">
       {items.map((item) => {
         return item.url.charAt(0) === '/' ? (
-          <Link
-            className="hover:text-green-500"
-            key={item.name}
-            to={process.env.PUBLIC_URL + item.url}
-          >
+          <Link className="hover:text-green-500" key={item.name} to={item.url}>
             {item.name}
           </Link>
         ) : (
