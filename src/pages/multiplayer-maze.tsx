@@ -57,6 +57,7 @@ function MultiplayerMaze(): JSX.Element {
 
   window.onbeforeunload = () => {
     gameRef.current?.cleanUp();
+    return 'Are you sure you want to leave?';
   };
 
   return (
