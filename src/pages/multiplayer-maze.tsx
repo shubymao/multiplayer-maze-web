@@ -69,7 +69,7 @@ function MultiplayerMaze(): JSX.Element {
         </p>
         <p>{INSTRUCTION}</p>
         <Canvas ref={canvasRef} size={canvasSize} />
-        <JoyStick size={120} offStick={offStick} onStick={onStick} />
+        <JoyStick size={100} offStick={offStick} onStick={onStick} />
       </Container>
     </>
   );

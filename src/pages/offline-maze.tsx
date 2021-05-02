@@ -51,7 +51,7 @@ function OfflineMaze(): JSX.Element {
       <h1 className="text-4xl my-4 text-center">Offline Maze Level {level}</h1>
       <p>{INSTRUCTION}</p>
       <Canvas ref={canvasRef} size={canvasSize} />
-      <JoyStick size={120} offStick={offStick} onStick={onStick} />
+      <JoyStick size={100} offStick={offStick} onStick={onStick} />
     </Container>
   );
 }

@@ -16,7 +16,7 @@ const Container: FC<ContainerProps> = (props: ContainerProps) => {
       onKeyUp={onKeyUp}
       className="w-full cursor-default min-h-screen bg-gray-700"
     >
-      <div className="space-y-4 flex flex-col text-center items-center p-4 text-white">
+      <div className="space-y-4 flex flex-col text-center items-center p-5 text-white">
         {children}
       </div>
     </div>
