@@ -5,7 +5,7 @@ import LINKS from '../constants';
 const Nav: FC = () => {
   const items = LINKS;
   return (
-    <div className="flex justify-center flex-wrap gap-4 text-white">
+    <div className="flex justify-center flex-wrap gap-x-5 gap-y-2 text-white">
       {items.map((item) => {
         return item.url.charAt(0) === '/' ? (
           <Link className="hover:text-green-500" key={item.name} to={item.url}>

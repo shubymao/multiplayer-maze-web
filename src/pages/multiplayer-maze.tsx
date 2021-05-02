@@ -5,7 +5,7 @@ import Canvas from '../components/canvas';
 import Container from '../components/container';
 import JoyStick from '../components/joy-stick';
 import Nav from '../components/nav';
-import { IDLE_CONTROL, TOAST_CONFIG } from '../constants';
+import { IDLE_CONTROL, INSTRUCTION, TOAST_CONFIG } from '../constants';
 import getCanvasSize, { getOnKey, getOffKey, getOnStick, getOffStick } from '../lib/misc-util';
 import MultiplayerGame from '../lib/multiplayer-game';
 import { CallBack, Control } from '../type';
@@ -20,7 +20,7 @@ const callBack: CallBack = (success, msg) => {
   else toast.error(msg, TOAST_CONFIG);
 };
 
-function MultiPlayerMaze(): JSX.Element {
+function MultiplayerMaze(): JSX.Element {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const bigScreen = useMediaQuery({ query: '(min-width: 600px)' });
   const midScreen = useMediaQuery({ query: '(min-width: 400px)' });
@@ -62,8 +62,12 @@ function MultiPlayerMaze(): JSX.Element {
   return (
     <>
       <Container onKeyDown={onKey} onKeyUp={offKey}>
-        <h1 className="text-4xl my-4">Maze Multiplayer</h1>
         <Nav />
+        <h1 className="text-4xl my-4">Maze Multiplayer</h1>
+        <p>
+          No one is here? Invite your friend or open another client in incognito or another browser.
+        </p>
+        <p>{INSTRUCTION}</p>
         <Canvas ref={canvasRef} size={canvasSize} />
         <JoyStick size={120} offStick={offStick} onStick={onStick} />
       </Container>
@@ -71,4 +75,4 @@ function MultiPlayerMaze(): JSX.Element {
   );
 }
 
-export default MultiPlayerMaze;
+export default MultiplayerMaze;

@@ -4,9 +4,9 @@ import { Control, Cord, Direction, Link, StringMap } from './type';
 const LINKS: Array<Link> = [
   { name: 'Home', url: 'https://shuby-mao.web.app/' },
   { name: 'Project Page', url: 'https://shuby-mao.web.app/projects/web-multiplayer-maze' },
-  { name: 'Multiplayer Maze', url: '/online' },
-  { name: 'Offline Maze', url: '/' },
-  { name: 'Generator Demo', url: '/generator' }
+  { name: 'Multiplayer Maze', url: '/' },
+  { name: 'Offline Maze', url: '/offline' },
+  { name: 'Generation Demo', url: '/generation-demo' }
 ];
 
 export const FIREBASE_CONFIG = {
@@ -30,11 +30,20 @@ export const TOAST_CONFIG = {
 
 export const KEY_MAP: StringMap = {
   ArrowLeft: Direction.LEFT,
+  a: Direction.LEFT,
+  A: Direction.LEFT,
   ArrowUp: Direction.TOP,
+  w: Direction.TOP,
+  W: Direction.TOP,
   ArrowRight: Direction.RIGHT,
-  ArrowDown: Direction.DOWN
+  d: Direction.RIGHT,
+  D: Direction.RIGHT,
+  ArrowDown: Direction.DOWN,
+  s: Direction.DOWN,
+  S: Direction.DOWN
 };
-
+export const INSTRUCTION =
+  'Control: w,a,s,d or ↑,←,↓,→. Use on-screen joystick on a touch screen device.';
 export const IDLE_CONTROL: Control = { magnitude: 0, angle: 0 };
 export const ID_CHARSET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 export const ID_LEN = 10;

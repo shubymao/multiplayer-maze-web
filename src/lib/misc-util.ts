@@ -1,5 +1,5 @@
 import { IDLE_CONTROL, ID_CHARSET, ID_LEN, KEY_MAP } from '../constants';
-import { CanvasOrNull, Context, Control, Cord, kHandler, Player, RRef } from '../type';
+import { CanvasOrNull, Context, Control, Cord, KHandler, Player, RRef } from '../type';
 import getControlFromDir, { addDir, removeDir } from './direction-util';
 
 export default function getCanvasSize(bigScreen: boolean, midScreen: boolean): number {
@@ -16,8 +16,8 @@ export function getContext(canvas?: CanvasOrNull): Context {
   return { ctx, height, width };
 }
 
-export const getOnKey = <T>(keyDirs: RRef<number>, control: RRef<Control>): kHandler<T> => {
-  const onKeyDown: kHandler<T> = (event) => {
+export const getOnKey = <T>(keyDirs: RRef<number>, control: RRef<Control>): KHandler<T> => {
+  const onKeyDown: KHandler<T> = (event) => {
     const dir = KEY_MAP[event.key] || 0;
     if (dir !== 0) event.preventDefault();
     keyDirs.current = addDir(keyDirs.current, dir);
@@ -26,8 +26,8 @@ export const getOnKey = <T>(keyDirs: RRef<number>, control: RRef<Control>): kHan
   return onKeyDown;
 };
 
-export const getOffKey = <T>(keyDirs: RRef<number>, control: RRef<Control>): kHandler<T> => {
-  const onKeyUp: kHandler<T> = (event) => {
+export const getOffKey = <T>(keyDirs: RRef<number>, control: RRef<Control>): KHandler<T> => {
+  const onKeyUp: KHandler<T> = (event) => {
     const dir = KEY_MAP[event.key] || 0;
     if (dir !== 0) event.preventDefault();
     keyDirs.current = removeDir(keyDirs.current, dir);

@@ -1,16 +1,17 @@
 import React, { MouseEventHandler } from 'react';
 
-interface LabelInputProp {
+export interface ButtonProp {
   onClick: MouseEventHandler<HTMLButtonElement>;
-  color: string;
+  stl: string;
+  hoverStl?: string;
   label: string;
 }
 
-const Button = (props: LabelInputProp): JSX.Element => {
-  const { onClick, color, label } = props;
+const Button = (props: ButtonProp): JSX.Element => {
+  const { onClick, stl, hoverStl, label } = props;
   return (
     <button
-      className={`p-3 rounded-lg ${color} bg-opacity-90 hover:bg-opacity-100`}
+      className={`p-3 focus:outline-none rounded-lg ${stl} ${hoverStl}`}
       onClick={onClick}
       type="submit"
     >

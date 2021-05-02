@@ -17,7 +17,7 @@ export type Ctx = CanvasRenderingContext2D;
 export type Control = { magnitude: number; angle: number };
 export type Player = { id: string; location: Cord };
 export type RRef<T> = MutableRefObject<T>;
-export type kHandler<T> = KeyboardEventHandler<T>;
+export type KHandler<T> = KeyboardEventHandler<T>;
 export type Context = { ctx: Ctx; width: number; height: number };
 export type CallBack = (success?: boolean, message?: string) => void;
 export interface StringMap {

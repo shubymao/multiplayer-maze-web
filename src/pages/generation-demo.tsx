@@ -40,21 +40,20 @@ function GenerationDemo(): JSX.Element {
     canvasManager.drawGrid(maze);
     setIsBusy(false);
   };
-
   const updateSize = handleChange(setSize, (n) => n <= 50);
   const updateDelay = handleChange(setDelay, (d) => d < 400);
   const updateSeed = handleChange(setSeed, (s) => s < 100000);
 
   return (
     <Container>
-      <h1 className="text-4xl my-4">Generation Demo</h1>
       <Nav />
+      <h1 className="text-4xl">Generation Demo</h1>
       <Canvas ref={canvasRef} size={canvasSize} />
       <div className="flex flex-wrap gap-3 items-center place-content-center">
         <LabelInput label="Size" value={size} onChange={updateSize} />
         <LabelInput label="Delay" value={delay} onChange={updateDelay} />
         <LabelInput label="Seed" value={seed} onChange={updateSeed} />
-        <Button color="bg-green-500" onClick={onClick} label="Generate" />
+        <Button onClick={onClick} label="Generate" stl="bg-green-500 hover:bg-green-400" />
       </div>
     </Container>
   );

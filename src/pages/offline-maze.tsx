@@ -5,12 +5,12 @@ import Canvas from '../components/canvas';
 import Container from '../components/container';
 import JoyStick from '../components/joy-stick';
 import Nav from '../components/nav';
-import { IDLE_CONTROL, TOAST_CONFIG } from '../constants';
+import { IDLE_CONTROL, INSTRUCTION, TOAST_CONFIG } from '../constants';
 import Game from '../lib/game';
 import getCanvasSize, { getOffStick, getOnStick, getOnKey, getOffKey } from '../lib/misc-util';
 import { Control } from '../type';
 
-function Maze(): JSX.Element {
+function OfflineMaze(): JSX.Element {
   const [level, setLevel] = useState(1);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const bigScreen = useMediaQuery({ query: '(min-width: 600px)' });
@@ -47,12 +47,13 @@ function Maze(): JSX.Element {
 
   return (
     <Container onKeyDown={onKey} onKeyUp={offKey}>
-      <h1 className="text-4xl my-4 text-center">Offline Maze Level {level}</h1>
       <Nav />
+      <h1 className="text-4xl my-4 text-center">Offline Maze Level {level}</h1>
+      <p>{INSTRUCTION}</p>
       <Canvas ref={canvasRef} size={canvasSize} />
       <JoyStick size={120} offStick={offStick} onStick={onStick} />
     </Container>
   );
 }
 
-export default Maze;
+export default OfflineMaze;
