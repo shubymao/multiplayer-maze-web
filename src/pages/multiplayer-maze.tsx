@@ -41,9 +41,18 @@ function MultiplayerMaze(): JSX.Element {
     animationRef.current = requestAnimationFrame(animate);
   }, []);
 
+  const onLeave = () => {
+    gameRef.current?.cleanUp();
+    return 'Are you sure you want to leave?';
+  };
+
   useEffect(() => {
     gameRef.current = new MultiplayerGame(canvasRef.current, onGameOver, callBack);
-    return () => gameRef.current?.cleanUp();
+    window.addEventListener('beforeunload', onLeave);
+    return () => {
+      gameRef.current?.cleanUp();
+      window.removeEventListener('beforeunload', onLeave);
+    };
   }, []);
 
   useEffect(() => {
@@ -54,11 +63,6 @@ function MultiplayerMaze(): JSX.Element {
     animationRef.current = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationRef.current);
   }, [animate]);
-
-  window.onbeforeunload = () => {
-    gameRef.current?.cleanUp();
-    return 'Are you sure you want to leave?';
-  };
 
   return (
     <>
