@@ -21,14 +21,11 @@ const callBack: CallBack = (success, msg) => {
 };
 
 const createOnLeave = (cleanUp: () => void) => {
-  const leaveMsg = 'Are you sure you want to leave?';
-  const onLeave = (e: BeforeUnloadEvent) => {
+  const onLeave = () => {
     cleanUp();
-    window.removeEventListener('beforeunload', onLeave);
-    (e || window.event).returnValue = leaveMsg;
-    return leaveMsg;
   };
   window.addEventListener('beforeunload', onLeave);
+  window.addEventListener('pagehide', onLeave);
 };
 
 function MultiplayerMaze(): JSX.Element {
