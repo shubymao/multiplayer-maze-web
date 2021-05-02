@@ -20,6 +20,17 @@ const callBack: CallBack = (success, msg) => {
   else toast.error(msg, TOAST_CONFIG);
 };
 
+const createOnLeave = (cleanUp: () => void) => {
+  const leaveMsg = 'Are you sure you want to leave?';
+  const onLeave = (e: BeforeUnloadEvent) => {
+    cleanUp();
+    window.removeEventListener('beforeunload', onLeave);
+    (e || window.event).returnValue = leaveMsg;
+    return leaveMsg;
+  };
+  window.addEventListener('beforeunload', onLeave);
+};
+
 function MultiplayerMaze(): JSX.Element {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const bigScreen = useMediaQuery({ query: '(min-width: 600px)' });
@@ -41,17 +52,11 @@ function MultiplayerMaze(): JSX.Element {
     animationRef.current = requestAnimationFrame(animate);
   }, []);
 
-  const onLeave = () => {
-    gameRef.current?.cleanUp();
-    return 'Are you sure you want to leave?';
-  };
-
   useEffect(() => {
     gameRef.current = new MultiplayerGame(canvasRef.current, onGameOver, callBack);
-    window.addEventListener('beforeunload', onLeave);
+    createOnLeave(() => gameRef.current?.cleanUp());
     return () => {
       gameRef.current?.cleanUp();
-      window.removeEventListener('beforeunload', onLeave);
     };
   }, []);
 
