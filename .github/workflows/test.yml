@@ -8,6 +8,11 @@ jobs:
     strategy:
       matrix:
         node-version: [15.x]
+    env:
+      REACT_APP_firebase_apiKey: ${{ secrets.API_KEY }}
+      REACT_APP_firebase_authDomain: ${{ secrets.AUTHDOMAIN }}
+      REACT_APP_firebase_databaseURL: ${{ secrets.DATABASE_URL }}
+      REACT_APP_firebase_storageBucket: ${{ secrets.STORAGEBUCKET }}
     steps:
       - uses: actions/checkout@v1
       - name: Use Node.js ${{ matrix.node-version }}

@@ -1,29 +1,23 @@
 import { isValidGrid } from './maze-generator';
-import { Direction, Cell, Cord, OnUpdate, CanvasOrNull, Context } from '../type';
+import { Direction, Cell, Cord, CanvasOrNull, Ctx, OnUpdate } from '../type';
 import { hasDirection, ALL_DIRS_ARR } from './direction-util';
+import {
+  BORDER_COLOR,
+  DEFAULT_PLAYER_COLOR,
+  END_COLOR,
+  GRID_PADDING,
+  INDICATOR_COLOR,
+  PLAYER_RADIUS_TO_CELL_RATIO,
+  START_COLOR
+} from '../constants';
+import { getContext } from './misc-util';
 
-const PADDING = 10;
-const START_COLOR = '#DC2626';
-const END_COLOR = '#10B981';
-const BORDER_COLOR = '#000000';
-const INDICATOR_COLOR = '#FF0000';
-const DEFAULT_PLAYER_COLOR = '#FBBF24';
 const TWO_PI = 2 * Math.PI;
 const DEFAULT_STOKE_WIDTH = 1;
 const PLAYER_STOKE_WIDTH = 2;
-
-function sleep(ms: number) {
+export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
-
-function getContext(canvas?: CanvasOrNull) {
-  if (!canvas) throw new Error('Canvas is not defined.');
-  const { height, width } = canvas;
-  const context = canvas.getContext('2d');
-  if (!context) throw new Error('Unable to get context.');
-  return { context, height, width };
-}
-
 export function getOnUpdate(canvasManager: CanvasManager, delay = 50): OnUpdate {
   const cm = canvasManager;
   return async (grid: Cell[][], cord: Cord) => {
@@ -36,7 +30,7 @@ export function getOnUpdate(canvasManager: CanvasManager, delay = 50): OnUpdate 
 export default class CanvasManager {
   private canvas: CanvasOrNull;
 
-  private ctx: Context;
+  private ctx: Ctx;
 
   private width: number;
 
@@ -54,15 +48,15 @@ export default class CanvasManager {
 
   constructor(canvas: CanvasOrNull) {
     this.canvas = canvas;
-    const { context, height, width } = getContext(this.canvas);
-    this.ctx = context;
+    const { ctx, height, width } = getContext(this.canvas);
+    this.ctx = ctx;
     this.width = width;
     this.height = height;
   }
 
   public refreshContext(): void {
-    const { context, height, width } = getContext(this.canvas);
-    this.ctx = context;
+    const { ctx, height, width } = getContext(this.canvas);
+    this.ctx = ctx;
     this.width = width;
     this.height = height;
   }
@@ -107,9 +101,9 @@ export default class CanvasManager {
   };
 
   private initDimension = (width: number, height: number, grid: Cell[][]): void => {
-    this.gridSize = Math.min(width, height) - 2 * PADDING;
+    this.gridSize = Math.min(width, height) - 2 * GRID_PADDING;
     this.cellSize = this.gridSize / grid.length;
-    this.playerRadius = this.cellSize * 0.1;
+    this.playerRadius = this.cellSize * PLAYER_RADIUS_TO_CELL_RATIO;
     this.padY = (height - this.gridSize) / 2;
     this.padX = (width - this.gridSize) / 2;
   };

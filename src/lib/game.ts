@@ -1,11 +1,9 @@
 import CanvasManager from './canvas-manager';
 import { generateMazeSync } from './maze-generator';
-import { Cell, Cord, Direction, CanvasOrNull, Control } from '../type';
+import { Cell, Cord, Direction, CanvasOrNull, Control, Player } from '../type';
 import { hasDirection } from './direction-util';
-
-const START_POS: Cord = { r: 0.5, c: 0.5 };
-const MARGIN = 0.1;
-const MAX_SPEED = 0.05;
+import { generatePlayer, randomColorFromString } from './misc-util';
+import { MAX_SPEED, PLAYER_RADIUS_TO_CELL_RATIO as MARGIN, START_POS } from '../constants';
 
 export default class Game {
   private canvasManager: CanvasManager;
@@ -16,7 +14,9 @@ export default class Game {
 
   private gridSize: number;
 
-  private position: Cord;
+  private player: Player;
+
+  private opPositions?: Map<string, Cord>;
 
   private seed?: number;
 
@@ -24,38 +24,34 @@ export default class Game {
     this.seed = seed;
     this.level = level;
     this.gridSize = this.level + 5;
-    this.position = START_POS;
+    this.player = generatePlayer(START_POS);
     this.maze = generateMazeSync(this.gridSize, this.seed);
     this.canvasManager = new CanvasManager(canvas);
   }
-
-  public setLevel = (level: number): void => {
-    this.level = level;
-    this.gridSize += level + 5;
-    this.position = START_POS;
-    this.maze = generateMazeSync(this.gridSize, this.seed);
-    this.renderGame();
-  };
 
   public getMaze = (): Cell[][] => {
     return this.maze;
   };
 
-  public getPosition = (): Cord => {
-    return this.position;
+  public getMyPlayer = (): Player => {
+    return this.player;
+  };
+
+  public setOpponentsPos = (positions: Map<string, Cord>): void => {
+    this.opPositions = positions;
   };
 
   public performMove = (control: Control): void => {
     const { magnitude, angle } = control;
-    let nr = this.position.r;
-    let nc = this.position.c;
+    let nr = this.player.location.r;
+    let nc = this.player.location.c;
     nr += -MAX_SPEED * magnitude * Math.sin(angle);
     nc += MAX_SPEED * magnitude * Math.cos(angle);
-    this.position = this.getBoundedCord(nr, nc);
+    this.player.location = this.getBoundedCord(nr, nc);
   };
 
   private getBoundedCord = (nr: number, nc: number): Cord => {
-    const { r, c } = this.position;
+    const { r, c } = this.player.location;
     const [tr, tc] = [Math.floor(r), Math.floor(c)];
     const cell = this.maze[tr][tc];
     if (hasDirection(cell, Direction.TOP)) nr = Math.max(tr + MARGIN, nr);
@@ -66,8 +62,8 @@ export default class Game {
   };
 
   public checkWin = (): boolean => {
-    const dr = Math.abs(this.position.r - (this.gridSize - 0.5));
-    const dc = Math.abs(this.position.c - (this.gridSize - 0.5));
+    const dr = Math.abs(this.player.location.r - (this.gridSize - 0.5));
+    const dc = Math.abs(this.player.location.c - (this.gridSize - 0.5));
     return dr <= 0.5 && dc <= 0.5;
   };
 
@@ -75,6 +71,10 @@ export default class Game {
     this.canvasManager.refreshContext();
     this.canvasManager.drawGrid(this.maze);
     this.canvasManager.drawStartFinish(this.maze);
-    this.canvasManager.drawPlayer(this.position);
+    this.opPositions?.forEach((pos, id) =>
+      this.canvasManager.drawPlayer(pos, randomColorFromString(id))
+    );
+    const { location, id } = this.player;
+    this.canvasManager.drawPlayer(location, randomColorFromString(id));
   };
 }

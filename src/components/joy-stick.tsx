@@ -17,12 +17,12 @@ export const JOY_STICK_CONFIG: JoystickManagerOptions = {
 
 export interface JoyStickProps {
   size: number;
-  onEventHandler: (control: Control) => void;
-  offEventHandler: () => void;
+  onStick: (control: Control) => void;
+  offStick: () => void;
 }
 
 const JoyStick = (props: JoyStickProps): JSX.Element => {
-  const { size, onEventHandler, offEventHandler } = props;
+  const { size, onStick: onEventHandler, offStick: offEventHandler } = props;
   const myContainer = createRef<HTMLDivElement>();
   const manager = useRef<JoystickManager | null>(null);
 
