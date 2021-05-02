@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
+import { toast } from 'react-toastify';
 import Canvas from '../components/canvas';
 import Container from '../components/container';
 import JoyStick from '../components/joy-stick';
 import Nav from '../components/nav';
-import { IDLE_CONTROL } from '../constants';
+import { IDLE_CONTROL, TOAST_CONFIG } from '../constants';
 import Game from '../lib/game';
 import getCanvasSize, { getOffStick, getOnStick, getOnKey, getOffKey } from '../lib/misc-util';
 import { Control } from '../type';
@@ -24,18 +25,19 @@ function Maze(): JSX.Element {
   const onStick = getOnStick(control);
   const offStick = getOffStick(control);
 
+  useEffect(() => {
+    setCanvasSize(getCanvasSize(bigScreen, midScreen));
+  }, [bigScreen, midScreen]);
+
   const animate: FrameRequestCallback = useCallback(() => {
     game.current?.performMove(control.current);
     game.current?.renderGame();
     if (game.current?.checkWin()) {
+      toast.success(`Reached Level ${level + 1}`, TOAST_CONFIG);
       setLevel(level + 1);
     }
     animationRef.current = requestAnimationFrame(animate);
   }, [control, game, level]);
-
-  useEffect(() => {
-    setCanvasSize(getCanvasSize(bigScreen, midScreen));
-  }, [bigScreen, midScreen]);
 
   useEffect(() => {
     game.current = new Game(canvasRef.current, level);

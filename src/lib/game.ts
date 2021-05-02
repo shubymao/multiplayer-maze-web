@@ -20,11 +20,11 @@ export default class Game {
 
   private seed?: number;
 
-  constructor(canvas: CanvasOrNull, level: number, seed?: number) {
+  constructor(canvas: CanvasOrNull, level: number, seed?: number, pid?: string) {
     this.seed = seed;
     this.level = level;
     this.gridSize = this.level + 5;
-    this.player = generatePlayer(START_POS);
+    this.player = generatePlayer(START_POS, pid);
     this.maze = generateMazeSync(this.gridSize, this.seed);
     this.canvasManager = new CanvasManager(canvas);
   }

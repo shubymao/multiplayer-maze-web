@@ -19,3 +19,7 @@ export type Player = { id: string; location: Cord };
 export type RRef<T> = MutableRefObject<T>;
 export type kHandler<T> = KeyboardEventHandler<T>;
 export type Context = { ctx: Ctx; width: number; height: number };
+export type CallBack = (success?: boolean, message?: string) => void;
+export interface StringMap {
+  [key: string]: number;
+}

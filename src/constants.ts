@@ -1,11 +1,12 @@
-import { Control, Cord, Direction, Link } from './type';
+import { ToastPosition } from 'react-toastify';
+import { Control, Cord, Direction, Link, StringMap } from './type';
 
 const LINKS: Array<Link> = [
   { name: 'Home', url: 'https://shuby-mao.web.app/' },
   { name: 'Project Page', url: 'https://shuby-mao.web.app/projects/web-multiplayer-maze' },
   { name: 'Multiplayer Maze', url: '/online' },
-  { name: 'Generator Demo', url: '/generator' },
-  { name: 'Offline Maze', url: '/' }
+  { name: 'Offline Maze', url: '/' },
+  { name: 'Generator Demo', url: '/generator' }
 ];
 
 export const FIREBASE_CONFIG = {
@@ -15,7 +16,10 @@ export const FIREBASE_CONFIG = {
   storageBucket: process.env.REACT_APP_firebase_storageBucket
 };
 
+const position: ToastPosition = 'top-right';
+
 export const TOAST_CONFIG = {
+  position,
   autoClose: 5000,
   hideProgressBar: true,
   closeOnClick: true,
@@ -23,10 +27,6 @@ export const TOAST_CONFIG = {
   draggable: true,
   progress: undefined
 };
-
-export interface StringMap {
-  [key: string]: number;
-}
 
 export const KEY_MAP: StringMap = {
   ArrowLeft: Direction.LEFT,
@@ -36,15 +36,10 @@ export const KEY_MAP: StringMap = {
 };
 
 export const IDLE_CONTROL: Control = { magnitude: 0, angle: 0 };
-
 export const ID_CHARSET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
 export const ID_LEN = 10;
-
 export const PLAYER_RADIUS_TO_CELL_RATIO = 0.15;
-
 export const MAX_SPEED = 0.05;
-
 export const START_POS: Cord = { r: 0.5, c: 0.5 };
 export const GRID_PADDING = 5;
 export const START_COLOR = '#DC2626';

@@ -1,16 +1,20 @@
 import firebase from 'firebase/app';
 import 'firebase/database';
+import 'firebase/auth';
 import { FIREBASE_CONFIG } from '../constants';
-import { CanvasOrNull, Control, Cord } from '../type';
+import { CallBack, CanvasOrNull, Control, Cord, Player } from '../type';
 import Game from './game';
 
-const REFRESH_THRESHOLD = 10;
-firebase.initializeApp(FIREBASE_CONFIG);
+const REFRESH_THRESHOLD = 3;
+
+type Auth = firebase.auth.Auth;
 type SnapShot = firebase.database.DataSnapshot;
 type Reference = firebase.database.Reference;
 
 export default class MultiplayerGame {
   private isWinner: boolean;
+
+  private myUID?: string;
 
   private lastUpdatedPosition?: Cord;
 
@@ -20,23 +24,24 @@ export default class MultiplayerGame {
 
   private counter = 0;
 
-  private game?: Game;
+  private game!: Game;
 
   private canvas: CanvasOrNull;
 
-  private realTimeDB: firebase.database.Database;
+  private realTimeDB!: firebase.database.Database;
 
-  private onGameOver?: (win: boolean) => void;
+  private onGameOver?: CallBack;
 
-  constructor(canvas: CanvasOrNull, onGameOver?: (win: boolean) => void) {
+  private callBack?: CallBack;
+
+  constructor(canvas: CanvasOrNull, onGameOver?: CallBack, callBack?: CallBack) {
+    this.initFirebaseService();
     this.isWinner = false;
-    this.realTimeDB = firebase.database();
     this.canvas = canvas;
     this.opPositions = new Map();
     this.refMap = new Map();
-    this.addSeedListener();
-    this.addPlayersListener();
     this.onGameOver = onGameOver;
+    this.callBack = callBack;
   }
 
   public performMove = (control: Control): void => {
@@ -58,8 +63,32 @@ export default class MultiplayerGame {
   };
 
   public cleanUp = (): void => {
-    if (this.game) this.removePlayer(this.game.getMyPlayer().id, true);
+    if (this.game) this.removePlayer(this.game.getMyPlayer());
     this.refMap.forEach((ref) => ref.off());
+  };
+
+  private initFirebaseService = () => {
+    if (!firebase.apps.length) {
+      firebase.initializeApp(FIREBASE_CONFIG);
+    }
+    const app = firebase.app(); // if already initialized, use that one
+    this.realTimeDB = firebase.database(app);
+    const auth = firebase.auth(app);
+    this.signInAndInitListener(auth);
+  };
+
+  private signInAndInitListener = (auth: Auth) => {
+    auth.signInAnonymously().catch(() => {
+      if (this.callBack) this.callBack(false, 'Login failed. Please try refresh the page.');
+    });
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        if (this.callBack) this.callBack(true, `Login Success.`);
+        this.myUID = user.uid;
+        this.addSeedListener();
+        this.addPlayersListener();
+      }
+    });
   };
 
   private addSeedListener = () => {
@@ -106,22 +135,19 @@ export default class MultiplayerGame {
   private onOtherPlayerLeave = (removedChild: SnapShot) => {
     const playerId = removedChild.key;
     if (playerId && playerId !== this.game?.getMyPlayer().id) {
-      this.removePlayer(playerId);
+      const apiPath = `/players/${playerId}`;
+      this.opPositions.delete(playerId);
+      this.refMap.delete(apiPath);
+      this.realTimeDB.ref(apiPath).off();
     }
   };
 
-  private removePlayer = (playerId: string, del = false): void => {
-    const apiPath = `/players/${playerId}`;
-    this.opPositions.delete(playerId);
-    this.refMap.delete(apiPath);
-    this.realTimeDB.ref(apiPath).off();
-    if (del) this.realTimeDB.ref(apiPath).remove();
+  private registerPlayer = (player: Player): void => {
+    this.realTimeDB.ref(`/players/${player.id}`).set(player.location);
   };
 
-  private registerMyPlayer = (): void => {
-    const myPlayer = this.game?.getMyPlayer();
-    if (!myPlayer) return;
-    this.realTimeDB.ref(`/players/${myPlayer.id}`).set(myPlayer.location);
+  private removePlayer = (player: Player): void => {
+    this.realTimeDB.ref(`/players/${player.id}`).remove();
   };
 
   private updateMyLocation = (): void => {
@@ -136,10 +162,10 @@ export default class MultiplayerGame {
   };
 
   private initNewGame = (seed: number) => {
-    if (this.game) this.removePlayer(this.game.getMyPlayer().id, true);
-    this.game = new Game(this.canvas, 10, seed);
+    this.game = new Game(this.canvas, 10, seed, this.myUID);
     this.game.setOpponentsPos(this.opPositions);
-    this.registerMyPlayer();
+    const myPlayer = this.game.getMyPlayer();
+    if (myPlayer) this.registerPlayer(myPlayer);
     this.isWinner = false;
   };
 }

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
-import { toast, ToastContainer, ToastPosition } from 'react-toastify';
+import { toast } from 'react-toastify';
 import Canvas from '../components/canvas';
 import Container from '../components/container';
 import JoyStick from '../components/joy-stick';
@@ -8,14 +8,16 @@ import Nav from '../components/nav';
 import { IDLE_CONTROL, TOAST_CONFIG } from '../constants';
 import getCanvasSize, { getOnKey, getOffKey, getOnStick, getOffStick } from '../lib/misc-util';
 import MultiplayerGame from '../lib/multiplayer-game';
-import { Control } from '../type';
+import { CallBack, Control } from '../type';
 
-const position: ToastPosition = 'top-center';
-const config = { position, ...TOAST_CONFIG };
+const onGameOver: CallBack = (win) => {
+  if (win) toast.success('Congrats, You won the game 🚀', TOAST_CONFIG);
+  else toast.error('Too Slow,  Faster Next Time 😭', TOAST_CONFIG);
+};
 
-const onGameOver = (win: boolean): void => {
-  if (win) toast.success('Congrats, You won the game 🚀', config);
-  else toast.error('Too Slow,  Faster Next Time 😭', config);
+const callBack: CallBack = (success, msg) => {
+  if (success) toast.success(msg, TOAST_CONFIG);
+  else toast.error(msg, TOAST_CONFIG);
 };
 
 function MultiPlayerMaze(): JSX.Element {
@@ -40,7 +42,7 @@ function MultiPlayerMaze(): JSX.Element {
   }, []);
 
   useEffect(() => {
-    gameRef.current = new MultiplayerGame(canvasRef.current, onGameOver);
+    gameRef.current = new MultiplayerGame(canvasRef.current, onGameOver, callBack);
     return () => gameRef.current?.cleanUp();
   }, []);
 
@@ -59,7 +61,6 @@ function MultiPlayerMaze(): JSX.Element {
 
   return (
     <>
-      <ToastContainer />
       <Container onKeyDown={onKey} onKeyUp={offKey}>
         <h1 className="text-4xl my-4">Maze Multiplayer</h1>
         <Nav />

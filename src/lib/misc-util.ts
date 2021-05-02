@@ -58,8 +58,8 @@ function generateRandomID(len: number) {
   return result.join('');
 }
 
-export function generatePlayer(position: Cord): Player {
-  const id = generateRandomID(ID_LEN);
+export function generatePlayer(position: Cord, pid?: string): Player {
+  const id = pid || generateRandomID(ID_LEN);
   const location = position;
   return { id, location };
 }
