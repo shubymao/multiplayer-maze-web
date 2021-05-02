@@ -50,23 +50,6 @@ export default class Game {
     this.player.location = this.getBoundedCord(nr, nc);
   };
 
-  private getBoundedCord = (nr: number, nc: number): Cord => {
-    const { r, c } = this.player.location;
-    const [tr, tc] = [Math.floor(r), Math.floor(c)];
-    const cell = this.maze[tr][tc];
-    if (hasDirection(cell, Direction.TOP)) nr = Math.max(tr + MARGIN, nr);
-    if (hasDirection(cell, Direction.DOWN)) nr = Math.min(tr + 1 - MARGIN, nr);
-    if (hasDirection(cell, Direction.LEFT)) nc = Math.max(tc + MARGIN, nc);
-    if (hasDirection(cell, Direction.RIGHT)) nc = Math.min(tc + 1 - MARGIN, nc);
-    return { r: nr, c: nc };
-  };
-
-  public checkWin = (): boolean => {
-    const dr = Math.abs(this.player.location.r - (this.gridSize - 0.5));
-    const dc = Math.abs(this.player.location.c - (this.gridSize - 0.5));
-    return dr <= 0.5 && dc <= 0.5;
-  };
-
   public renderGame = (): void => {
     this.canvasManager.refreshContext();
     this.canvasManager.drawGrid(this.maze);
@@ -76,5 +59,22 @@ export default class Game {
     );
     const { location, id } = this.player;
     this.canvasManager.drawPlayer(location, randomColorFromString(id));
+  };
+
+  public checkWin = (): boolean => {
+    const dr = Math.abs(this.player.location.r - (this.gridSize - 0.5));
+    const dc = Math.abs(this.player.location.c - (this.gridSize - 0.5));
+    return dr <= 0.5 && dc <= 0.5;
+  };
+
+  private getBoundedCord = (nr: number, nc: number): Cord => {
+    const { r, c } = this.player.location;
+    const [tr, tc] = [Math.floor(r), Math.floor(c)];
+    const cell = this.maze[tr][tc];
+    if (hasDirection(cell, Direction.TOP)) nr = Math.max(tr + MARGIN, nr);
+    if (hasDirection(cell, Direction.DOWN)) nr = Math.min(tr + 1 - MARGIN, nr);
+    if (hasDirection(cell, Direction.LEFT)) nc = Math.max(tc + MARGIN, nc);
+    if (hasDirection(cell, Direction.RIGHT)) nc = Math.min(tc + 1 - MARGIN, nc);
+    return { r: nr, c: nc };
   };
 }
