@@ -43,7 +43,7 @@ function depthFirstSearch(cord: Cord): void {
     const nextCord = getNextCord(cord, dir);
     if (!isOutOfBound(maze, nextCord) && !isVisited(nextCord)) {
       breakWall(maze, cord, dir);
-      breakWall(maze, nextCord, getOPDir(dir));
+      breakWall(maze, nextCord, getOppositeDir(dir));
       depthFirstSearchSync(nextCord);
     }
   }
@@ -62,55 +62,55 @@ function depthFirstSearch(cord: Cord): void {
 
 ### `class Game`
 
-- The is the class that handles the game logic and the rendering of the game.
+The is the class that handles the game logic and the rendering of the game.
 
-#### `constructor(canvas: Canvas, level: number, seed?: number, pid?: string)`
+- `constructor(canvas: Canvas, level: number, seed?: number, pid?: string)`
 
-- constructor of the game class.
+    - constructor of the game class.
 
-#### `getMaze():Cell[][]`
+- `getMaze():Cell[][]`
 
-- get the underlying maze object.
+    - get the underlying maze object.
 
-#### `getMyPlayer():Player`
+- `getMyPlayer():Player`
 
-- get my player object
+    - get my player object
 
-#### `setOpponentsPos(positions: Map<string, Cord>): void`
+- `setOpponentsPos(positions: Map<string, Cord>): void`
 
-- set the opponents positions.
+  - set the opponents positions.
 
-#### `performMove(control: Control): void`
+- `performMove(control: Control): void`
 
-- perform the move based on control object provided.
+  - perform the move based on control object provided.
 
-#### `renderGame(): void`
+- `renderGame(): void`
 
-- render the game with the maze and players.
+  - render the game with the maze and players.
 
-#### `checkWin(): boolean`
+- `checkWin(): boolean`
 
-- check if my player reach the end.
+  - check if my player reach the end.
 
 ### `class Multiplayer`
 
-- This is the class that over see the database listener and update the game value accordingly.
+This is the class that over see the database listener and update the game value accordingly.
 
-#### `constructor(canvas: Canvas, onGameOver?: CallBack, callBack?: CallBack)`
+- `constructor(canvas: Canvas, onGameOver?: CallBack, callBack?: CallBack)`
 
-- constructor of the multiplayer game.
+  - constructor of the multiplayer game.
 
-#### `performMove(control: Control): void`
+- `performMove(control: Control): void`
 
-- perform the move based on control object provided.
+  - perform the move based on control object provided.
 
-#### `render(): void`
+- `render(): void`
 
-- render the game on the canvas provided in the constructor.
+  - render the game on the canvas provided in the constructor.
 
-#### `cleanUp(): void`
+- `cleanUp(): void`
 
-- remove all listener and remove my player from the database.
+  - remove all listener and remove my player from the database.
 
 ## Gallery
 
