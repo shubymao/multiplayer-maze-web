@@ -5,14 +5,14 @@ import LINKS from '../constants';
 const Nav: FC = () => {
   const items = LINKS;
   return (
-    <div className="flex justify-center flex-wrap space-x-5 space-y-2 text-white">
+    <div className="flex justify-center flex-wrap space-x-5 text-white">
       {items.map((item) => {
         return item.url.charAt(0) === '/' ? (
-          <Link className="hover:text-green-500" key={item.name} to={item.url}>
+          <Link className="mt-2 hover:text-green-500" key={item.name} to={item.url}>
             {item.name}
           </Link>
         ) : (
-          <a href={item.url} key={item.name} className="hover:text-green-500">
+          <a href={item.url} key={item.name} className="mt-2 hover:text-green-500">
             {item.name}
           </a>
         );
